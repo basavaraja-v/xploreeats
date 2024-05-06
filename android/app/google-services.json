@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "120727932135",
+    "project_id": "xploreeats",
+    "storage_bucket": "xploreeats.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:120727932135:android:fa292fa77d006d5d196642",
+        "android_client_info": {
+          "package_name": "com.heyidb.xploreeats"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "120727932135-9ssomt54pg44la6qd5kl0b85hhrdhut3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHbyKjsMM-KAemCx-G8vfF4HungExHc2U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "120727932135-9ssomt54pg44la6qd5kl0b85hhrdhut3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "120727932135-1v2ggjr75sbp0iago0f46ts8vnqhav4e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.xploreeats"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
