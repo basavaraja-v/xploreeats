@@ -33,11 +33,8 @@ class ProfileService {
         'displayName': user.displayName,
         'username': user.username,
         'photoURL': user.photoURL,
-        'location': user.location,
         'isVegetarian': user.isVegetarian,
         'isNonVegetarian': user.isNonVegetarian,
-        'latitude': user.latitude,
-        'longitude': user.longitude,
       });
     } catch (e) {
       print('Error updating user profile: $e');

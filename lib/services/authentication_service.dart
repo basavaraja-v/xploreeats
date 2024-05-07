@@ -73,7 +73,6 @@ class AuthenticationService {
         photoURL: user.photoURL ?? '',
         isVegetarian: isVegetarian,
         isNonVegetarian: isNonVegetarian,
-        location: location,
         postsCount: postsCount,
         followersCount: followersCount,
         followingCount: followingCount,

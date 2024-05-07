@@ -25,9 +25,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _isVegetarian = false;
   bool _isNonVegetarian = false;
   bool _isLoading = false;
-  String _location = '';
-  double _latitude = 0.0;
-  double _longitude = 0.0;
   double _postsCount = 0;
   double _followersCount = 0;
   double _followingCount = 0;
@@ -36,7 +33,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _checkUserLoggedIn();
-    _requestLocationPermission();
   }
 
   Future<void> _checkUserLoggedIn() async {
@@ -51,44 +47,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _username = user.username;
         _isVegetarian = user.isVegetarian;
         _isNonVegetarian = user.isNonVegetarian;
-        _location = user.location!;
         _postsCount = user.postsCount!;
         _followersCount = user.followersCount!;
         _followingCount = user.followingCount!;
       });
-    }
-  }
-
-  Future<void> _requestLocationPermission() async {
-    if (await PermissionHandlerService.requestLocationPermission()) {
-      _fetchLocation();
-    }
-  }
-
-  Future<void> _fetchLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
-      setState(() {
-        // Extract relevant details from the first placemark
-        String street = placemarks[0].street ?? '';
-        String locality = placemarks[0].locality ?? '';
-        String subLocality = placemarks[0].subLocality ?? '';
-        String administrativeArea = placemarks[0].administrativeArea ?? '';
-        String country = placemarks[0].country ?? '';
-
-        // Combine the details into a formatted address
-        _location =
-            '$street, $subLocality, $locality, $administrativeArea, $country';
-        _latitude = position.latitude;
-        _longitude = position.longitude;
-      });
-    } catch (e) {
-      // Handle location fetch error
-      print('Error fetching location: $e');
-      // Additionally, handle potential geocoding errors
     }
   }
 
@@ -121,11 +83,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           username: _username ?? _user!.username,
           email: _user!.email,
           photoURL: _user!.photoURL,
-          location: _location,
           isVegetarian: _isVegetarian,
           isNonVegetarian: _isNonVegetarian,
-          latitude: _latitude,
-          longitude: _longitude,
         );
       });
 

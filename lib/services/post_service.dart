@@ -2,6 +2,15 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:xploreeats/models/post.dart';
+import 'dart:math' show atan2, cos, pi, sin, sqrt;
+import 'package:xploreeats/models/user.dart';
+
+class LatLng {
+  final double latitude;
+  final double longitude;
+
+  LatLng(this.latitude, this.longitude);
+}
 
 class PostService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -41,13 +50,58 @@ class PostService {
     }
   }
 
-  Stream<List<Post>> getPostsStream() {
-    return _db.collection('posts').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
+  Stream<List<Post>> getNearestPostsStream(double latitude, double longitude,
+      [GUser? user]) {
+    LatLng userLocation = LatLng(latitude, longitude);
+
+    // Construct the base query
+    Query baseQuery = _db.collection('posts');
+
+    // If user is provided, filter posts based on user preferences
+    if (user != null) {
+      // baseQuery = baseQuery
+      //     .where('isNonVegetarian', isEqualTo: user.isNonVegetarian)
+      //     .where('isVegetarian', isEqualTo: user.isVegetarian);
+    }
+
+    // Sort posts by timestamp in descending order to get most recent posts first
+    baseQuery = baseQuery.orderBy('timestamp', descending: true);
+
+    return baseQuery.snapshots().map((snapshot) {
+      final List<Post> posts = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
         return Post.fromMap(data, doc.id);
       }).toList();
+
+      // Sort filtered posts based on distance from user's location
+      posts.sort((a, b) {
+        final double distanceA = _calculateDistance(a.latitude, a.longitude,
+            userLocation.latitude, userLocation.longitude);
+        final double distanceB = _calculateDistance(b.latitude, b.longitude,
+            userLocation.latitude, userLocation.longitude);
+        return distanceA.compareTo(distanceB);
+      });
+
+      return posts;
     });
+  }
+
+  // Calculate distance between two points using Haversine formula
+  double _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
+    const double earthRadius = 6371; // in kilometers
+
+    final double latDistance = (lat2 - lat1) * (pi / 180);
+    final double lonDistance = (lon2 - lon1) * (pi / 180);
+    final double a = sin(latDistance / 2) * sin(latDistance / 2) +
+        cos(lat1 * (pi / 180)) *
+            cos(lat2 * (pi / 180)) *
+            sin(lonDistance / 2) *
+            sin(lonDistance / 2);
+    final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    final double distance = earthRadius * c;
+
+    return distance;
   }
 
   Future<void> updateLoveStatus(Post post) async {

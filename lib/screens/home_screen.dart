@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xploreeats/models/user.dart';
 import 'package:xploreeats/services/authentication_service.dart';
-import 'package:xploreeats/utils/app_constants.dart';
 import 'package:xploreeats/widgets/custom_appbar.dart';
 import 'package:xploreeats/screens/post/post_feed_screen.dart';
 
