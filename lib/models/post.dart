@@ -12,7 +12,7 @@ class Post {
   final bool isVegetarian;
   final bool isNonVegetarian;
   final bool isFree;
-  late String imageUrl;
+  late String videoUrl;
   final String dish;
   final DateTime timestamp;
   double likeCount;
@@ -31,7 +31,7 @@ class Post {
       required this.isVegetarian,
       required this.isNonVegetarian,
       required this.isFree,
-      required this.imageUrl,
+      required this.videoUrl,
       required this.dish,
       required this.timestamp,
       this.likeCount = 0,
@@ -50,7 +50,7 @@ class Post {
       'isVegetarian': isVegetarian,
       'isNonVegetarian': isNonVegetarian,
       'isFree': isFree,
-      'imageUrl': imageUrl,
+      'videoUrl': videoUrl,
       'dish': dish,
       'timestamp': timestamp,
       'likeCount': likeCount,
@@ -71,7 +71,7 @@ class Post {
         isVegetarian: data['isVegetarian'],
         isNonVegetarian: data['isNonVegetarian'],
         isFree: data['isFree'],
-        imageUrl: data['imageUrl'],
+        videoUrl: data['videoUrl'],
         dish: data['dish'],
         timestamp: (data['timestamp'] as Timestamp).toDate(),
         likeCount: data['likeCount'],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xploreeats/models/post.dart';
 import 'package:xploreeats/services/post_service.dart';
-import 'package:xploreeats/widgets/food_post_item.dart'; // Import your FoodPostItem widget here
+import 'package:xploreeats/widgets/food_post_item.dart';
 
 class PostFeedScreen extends StatefulWidget {
   @override
@@ -9,7 +9,18 @@ class PostFeedScreen extends StatefulWidget {
 }
 
 class _PostFeedScreenState extends State<PostFeedScreen> {
-  final PostService _postService = PostService();
+  late final PostService _postService;
+
+  @override
+  void initState() {
+    super.initState();
+    _postService = PostService();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +40,9 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
           return ListView.builder(
             itemCount: posts.length,
             itemBuilder: (context, index) {
-              return FoodPostItem(post: posts[index]);
+              return FoodPostItem(
+                post: posts[index],
+              );
             },
           );
         },

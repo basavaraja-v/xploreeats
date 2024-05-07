@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 import 'package:xploreeats/models/post.dart';
 import 'package:xploreeats/models/user.dart';
 import 'package:xploreeats/services/authentication_service.dart';
@@ -13,6 +14,7 @@ import 'package:xploreeats/widgets/custom_checkbox.dart';
 import 'package:xploreeats/widgets/custom_textformfield.dart';
 import 'package:xploreeats/services/post_service.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:xploreeats/widgets/postvideo_player.dart';
 
 class AddPostScreen extends StatefulWidget {
   @override
@@ -20,7 +22,7 @@ class AddPostScreen extends StatefulWidget {
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
-  File? _image;
+  File? _videoFile;
   String? _dishController;
   String? _restaurantNameController;
   String _location = '';
@@ -38,7 +40,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     super.initState();
     _loadUserProfile();
     _requestLocationPermission();
-    _getImage();
+    _pickVideo(ImageSource.gallery);
   }
 
   Future<void> _loadUserProfile() async {
@@ -48,17 +50,55 @@ class _AddPostScreenState extends State<AddPostScreen> {
     });
   }
 
-  Future<void> _getImage() async {
+  Future<void> _pickVideo(ImageSource source) async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickVideo(
+      source: source,
+      maxDuration: Duration(seconds: 90),
+    );
 
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
+    if (pickedFile != null) {
+      final videoFile = File(pickedFile.path);
+      final videoLength = await _getVideoDuration(videoFile);
+      if (videoLength <= 90) {
+        setState(() {
+          _videoFile = videoFile;
+        });
       } else {
-        print('No image selected.');
+        showCenterSnackBar(
+          context,
+          'Selected video exceeds 30 seconds.',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          duration: Duration(seconds: 3),
+        );
       }
-    });
+    }
+  }
+
+  void showCenterSnackBar(
+    BuildContext context,
+    String message, {
+    Color backgroundColor = Colors.black87,
+    Color textColor = Colors.white,
+    Duration duration = const Duration(seconds: 2),
+  }) {
+    final snackBar = SnackBar(
+      content: Text(message,
+          textAlign: TextAlign.center, style: TextStyle(color: textColor)),
+      backgroundColor: backgroundColor,
+      duration: duration,
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Future<int> _getVideoDuration(File videoFile) async {
+    final videoController = VideoPlayerController.file(videoFile);
+    await videoController.initialize();
+    final duration = videoController.value.duration;
+    await videoController.dispose();
+    return duration.inSeconds;
   }
 
   Future<void> _requestLocationPermission() async {
@@ -99,32 +139,17 @@ class _AddPostScreenState extends State<AddPostScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            _image != null
-                ? Image.file(_image!)
-                : Container(
-                    color: Colors.grey[200],
-                    height: 200,
-                    child: Center(
-                      child:
-                          CircularProgressIndicator(), // Show a loading indicator while picking the image
-                    ),
-                  ),
-            SizedBox(height: 10),
             CustomTextFormField(
               labelText: 'Dish',
               onChanged: (value) {
-                setState(() {
-                  _dishController = value;
-                });
+                _dishController = value;
               },
             ),
             SizedBox(height: 10),
             CustomTextFormField(
               labelText: 'Restaurant Name',
               onChanged: (value) {
-                setState(() {
-                  _restaurantNameController = value;
-                });
+                _restaurantNameController = value;
               },
             ),
             CustomCheckboxListTile(
@@ -154,15 +179,26 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 });
               },
             ),
+            _videoFile != null
+                ? PostVideoPlayer(
+                    key: UniqueKey(), videoSource: _videoFile!.path)
+                : Container(
+                    color: Colors.grey[200],
+                    height: 200,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
             SizedBox(height: 20),
             CustomButton(
-              onPressed: () {
+              onPressed: () async {
                 // Save the post to Firestore or perform other actions
-                Post newPost = Post(
+                if (_videoFile != null) {
+                  Post newPost = Post(
                     userId: user!.uid,
                     username: user!.username,
                     displayName: user!.displayName,
-                    imageUrl: '',
+                    videoUrl: '',
                     dish: _dishController!,
                     restaurantName: _restaurantNameController!,
                     latitude: _latitude,
@@ -171,9 +207,20 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     isVegetarian: _isVeg,
                     isNonVegetarian: _isNonVeg,
                     isFree: _isFree,
-                    timestamp: DateTime.timestamp());
-                _postService.addPost(newPost, _image!);
-                Navigator.of(context).pushReplacementNamed('/home');
+                    timestamp: DateTime.now(),
+                  );
+                  _postService.addPost(newPost, _videoFile!);
+                  Navigator.of(context).pushReplacementNamed('/home');
+                } else {
+                  // Show a message to the user if no video is selected
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Please select a video to post.'),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                }
               },
               text: 'Post',
             ),

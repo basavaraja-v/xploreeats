@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 import 'package:xploreeats/models/post.dart';
 import 'package:xploreeats/services/post_service.dart';
 import 'package:xploreeats/utils/app_constants.dart';
 import 'package:xploreeats/utils/numberformat.dart';
+import 'package:xploreeats/widgets/postvideo_player.dart';
 
 class FoodPostItem extends StatefulWidget {
   final Post post;
@@ -18,6 +20,16 @@ class _FoodPostItemState extends State<FoodPostItem> {
   final PostService _postService = PostService();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16.0),
@@ -26,12 +38,8 @@ class _FoodPostItemState extends State<FoodPostItem> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image
-          Image.network(
-            widget.post.imageUrl,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
+          // Video
+          PostVideoPlayer(videoSource: widget.post.videoUrl, isNetwork: true),
           SizedBox(height: 16),
           // Restaurant name and like/share/save buttons
           Row(

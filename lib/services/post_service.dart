@@ -6,34 +6,35 @@ import 'package:xploreeats/models/post.dart';
 class PostService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  Future<String> _uploadImage(File imageFile) async {
+
+  Future<String> _uploadVideo(File videoFile) async {
     try {
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
       final Reference reference =
-          _storage.ref().child('postimages').child(fileName);
-      UploadTask uploadTask = reference.putFile(imageFile);
+          _storage.ref().child('postvideos').child(fileName);
+      UploadTask uploadTask = reference.putFile(videoFile);
       TaskSnapshot snapshot = await uploadTask.whenComplete(() => null);
       String downloadUrl = await snapshot.ref.getDownloadURL();
       return downloadUrl;
     } catch (e) {
-      print('Error uploading image: $e');
+      print('Error uploading video: $e');
       return '';
     }
   }
 
-  Future<void> addPost(Post newPost, File imageFile) async {
+  Future<void> addPost(Post newPost, File videoFile) async {
     try {
-      // Upload image and get the download URL
-      String imageUrl = await _uploadImage(imageFile);
+      // Upload video and get the download URL
+      String videoUrl = await _uploadVideo(videoFile);
 
-      // Add the image URL to the newPost
-      newPost.imageUrl = imageUrl;
+      // Add the video URL to the newPost
+      newPost.videoUrl = videoUrl;
 
       // Convert newPost to a map
       Map<String, dynamic> postData = newPost.toMap();
 
       // Save the newPost to the Firestore collection
-      FirebaseFirestore.instance.collection('posts').add(postData);
+      await _db.collection('posts').add(postData);
       print('Post created successfully!');
     } catch (e) {
       print('Error creating post: $e');
@@ -41,14 +42,12 @@ class PostService {
   }
 
   Stream<List<Post>> getPostsStream() {
-    return FirebaseFirestore.instance.collection('posts').snapshots().map(
-      (snapshot) {
-        return snapshot.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          return Post.fromMap(data, doc.id);
-        }).toList();
-      },
-    );
+    return _db.collection('posts').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Post.fromMap(data, doc.id);
+      }).toList();
+    });
   }
 
   Future<void> updateLoveStatus(Post post) async {
