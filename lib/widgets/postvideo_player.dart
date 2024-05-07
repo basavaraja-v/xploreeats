@@ -36,8 +36,7 @@ class _PostVideoPlayerState extends State<PostVideoPlayer> {
 
     // Initialize the controller and start loading the video
     _initializeVideoPlayerFuture = _controller.initialize().then((_) {
-      // Auto play the video once initialized
-      _controller.play();
+      if (widget.isNetwork) _controller.play();
     });
 
     // Loop the video playback

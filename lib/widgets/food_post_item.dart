@@ -95,6 +95,17 @@ class _FoodPostItemState extends State<FoodPostItem> {
               ),
             ],
           ),
+          // Caption
+          Row(
+            children: [
+              Text(
+                widget.post.caption,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
           // Restaurant name
           Row(
             children: [
@@ -103,7 +114,7 @@ class _FoodPostItemState extends State<FoodPostItem> {
               Expanded(
                 child: Text(
                   widget.post.restaurantName,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

@@ -23,7 +23,7 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   File? _videoFile;
-  String? _dishController;
+  String? _captionController;
   String? _restaurantNameController;
   String _location = '';
   double _latitude = 0.0;
@@ -140,9 +140,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
         child: ListView(
           children: [
             CustomTextFormField(
-              labelText: 'Dish',
+              labelText: 'Caption',
               onChanged: (value) {
-                _dishController = value;
+                _captionController = value;
               },
             ),
             SizedBox(height: 10),
@@ -199,7 +199,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     username: user!.username,
                     displayName: user!.displayName,
                     videoUrl: '',
-                    dish: _dishController!,
+                    caption: _captionController!,
                     restaurantName: _restaurantNameController!,
                     latitude: _latitude,
                     longitude: _longitude,
