@@ -85,6 +85,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           photoURL: _user!.photoURL,
           isVegetarian: _isVegetarian,
           isNonVegetarian: _isNonVegetarian,
+          postsCount: _postsCount,
+          followersCount: _followersCount,
+          followingCount: _followingCount,
         );
       });
 

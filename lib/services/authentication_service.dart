@@ -43,7 +43,6 @@ class AuthenticationService {
     String username = '';
     bool isVegetarian = false;
     bool isNonVegetarian = false;
-    String location = '';
     double postsCount = 0;
     double followersCount = 0;
     double followingCount = 0;
@@ -58,7 +57,6 @@ class AuthenticationService {
         username = data['username'];
         isVegetarian = data['isVegetarian'];
         isNonVegetarian = data['isNonVegetarian'];
-        location = data['location'];
         postsCount = data['postsCount'] ?? 0;
         followersCount = data['followersCount'] ?? 0;
         followingCount = data['followingCount'] ?? 0;

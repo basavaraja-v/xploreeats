@@ -57,11 +57,21 @@ class PostService {
     // Construct the base query
     Query baseQuery = _db.collection('posts');
 
-    // If user is provided, filter posts based on user preferences
+    // Filter based on user preferences and post properties
     if (user != null) {
-      // baseQuery = baseQuery
-      //     .where('isNonVegetarian', isEqualTo: user.isNonVegetarian)
-      //     .where('isVegetarian', isEqualTo: user.isVegetarian);
+      bool isVegetarian = user.isVegetarian;
+      bool isNonVegetarian = user.isNonVegetarian;
+
+      // Filter posts based on user preferences and post properties
+      if (isVegetarian && isNonVegetarian) {
+      } else {
+        if (isVegetarian) {
+          baseQuery = baseQuery.where('isVegetarian', isEqualTo: true);
+        }
+        if (isNonVegetarian) {
+          baseQuery = baseQuery.where('isNonVegetarian', isEqualTo: true);
+        }
+      }
     }
 
     // Sort posts by timestamp in descending order to get most recent posts first
