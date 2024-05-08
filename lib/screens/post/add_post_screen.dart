@@ -170,15 +170,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 });
               },
             ),
-            CustomCheckboxListTile(
-              title: 'Free',
-              value: _isFree,
-              onChanged: (value) {
-                setState(() {
-                  _isFree = value!;
-                });
-              },
-            ),
+            // CustomCheckboxListTile(
+            //   title: 'Free',
+            //   value: _isFree,
+            //   onChanged: (value) {
+            //     setState(() {
+            //       _isFree = value!;
+            //     });
+            //   },
+            // ),
             _videoFile != null
                 ? PostVideoPlayer(
                     key: UniqueKey(), videoSource: _videoFile!.path)
@@ -198,6 +198,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     userId: user!.uid,
                     username: user!.username,
                     displayName: user!.displayName,
+                    profileUrl: user!.photoURL,
                     videoUrl: '',
                     caption: _captionController!,
                     restaurantName: _restaurantNameController!,

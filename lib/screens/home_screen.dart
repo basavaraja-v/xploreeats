@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: CustomAppBar(
         title: 'XploreEats',
       ),
-      body: PostFeedScreen(), // Replace Center widget with PostFeedScreen
+      body: PostFeedScreen(),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 user == null
                     ? showCenterSnackBar(
                         context,
-                        'Loggin to post.',
+                        'Sign Up to post.',
                         backgroundColor: Colors.red,
                         textColor: Colors.white,
                         duration: Duration(seconds: 3),

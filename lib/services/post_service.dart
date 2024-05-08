@@ -80,7 +80,7 @@ class PostService {
     return baseQuery.snapshots().map((snapshot) {
       final List<Post> posts = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        return Post.fromMap(data, doc.id);
+        return Post.fromMap(data, doc.id, user);
       }).toList();
 
       // Sort filtered posts based on distance from user's location
@@ -115,18 +115,27 @@ class PostService {
   }
 
   Future<void> updateLoveStatus(Post post) async {
-    bool isLoved = !post.isLikedByCurrentUser!;
-    DocumentReference postRef = _db.collection('posts').doc(post.docId);
-    if (isLoved) {
-      await postRef.update({
-        'likeCount': FieldValue.increment(1),
-        'likedBy': FieldValue.arrayUnion([post.userId]),
-      });
-    } else {
-      await postRef.update({
-        'likeCount': FieldValue.increment(-1),
-        'likedBy': FieldValue.arrayRemove([post.userId]),
-      });
+    if (post.userId != post.currentUserId) {
+      bool isLoved = !post.isLikedByCurrentUser!;
+      DocumentReference postRef = _db.collection('posts').doc(post.docId);
+      if (isLoved) {
+        await postRef.update({
+          'likeCount': FieldValue.increment(1),
+          'likedBy': FieldValue.arrayUnion([post.currentUserId]),
+        });
+      } else {
+        await postRef.update({
+          'likeCount': FieldValue.increment(-1),
+          'likedBy': FieldValue.arrayRemove([post.currentUserId]),
+        });
+      }
     }
+  }
+
+  Future<void> updateShareCount(Post post) async {
+    DocumentReference postRef = _db.collection('posts').doc(post.docId);
+    await postRef.update({
+      'shareCount': FieldValue.increment(1),
+    });
   }
 }

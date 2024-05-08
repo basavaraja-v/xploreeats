@@ -5,6 +5,7 @@ class Post {
   final String userId;
   final String username;
   final String displayName;
+  final String profileUrl;
   final String restaurantName;
   final double latitude;
   final double longitude;
@@ -17,6 +18,7 @@ class Post {
   final DateTime timestamp;
   double likeCount;
   double shareCount;
+  String? currentUserId;
   bool? isLikedByCurrentUser = false;
 
   Post(
@@ -24,6 +26,7 @@ class Post {
       required this.userId,
       required this.username,
       required this.displayName,
+      required this.profileUrl,
       required this.restaurantName,
       required this.latitude,
       required this.longitude,
@@ -36,6 +39,7 @@ class Post {
       required this.timestamp,
       this.likeCount = 0,
       this.shareCount = 0,
+      this.currentUserId,
       this.isLikedByCurrentUser});
 
   Map<String, dynamic> toMap() {
@@ -43,6 +47,7 @@ class Post {
       'userId': userId,
       'username': username,
       'displayName': displayName,
+      'profileUrl': profileUrl,
       'restaurantName': restaurantName,
       'latitude': latitude,
       'longitude': longitude,
@@ -58,12 +63,14 @@ class Post {
     };
   }
 
-  factory Post.fromMap(Map<String, dynamic> data, String docId) {
+  factory Post.fromMap(Map<String, dynamic> data, String docId, user) {
     return Post(
         docId: docId,
         userId: data['userId'],
+        currentUserId: user != null ? user.uid : '',
         username: data['username'],
         displayName: data['displayName'],
+        profileUrl: data['profileUrl'],
         restaurantName: data['restaurantName'],
         latitude: data['latitude'],
         longitude: data['longitude'],
@@ -76,8 +83,8 @@ class Post {
         timestamp: (data['timestamp'] as Timestamp).toDate(),
         likeCount: data['likeCount'],
         shareCount: data['shareCount'],
-        isLikedByCurrentUser: data['userId'] != null
-            ? data['likedBy']?.contains(data['userId']) ?? false
+        isLikedByCurrentUser: user != null
+            ? data['likedBy']?.contains(user.uid) ?? false
             : false);
   }
 }

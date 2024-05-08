@@ -40,4 +40,91 @@ class ProfileService {
       print('Error updating user profile: $e');
     }
   }
+
+  Future<void> followUser(String currentUserId, String userIdToFollow) async {
+    try {
+      final followingRef = _firestore
+          .collection('users')
+          .doc(currentUserId)
+          .collection('following')
+          .doc(userIdToFollow);
+      await followingRef.set({'timestamp': FieldValue.serverTimestamp()});
+
+      final followersRef = _firestore
+          .collection('users')
+          .doc(userIdToFollow)
+          .collection('followers')
+          .doc(currentUserId);
+      await followersRef.set({'timestamp': FieldValue.serverTimestamp()});
+
+      // Update the followingCount for the current user
+      final currentUserRef = _firestore.collection('users').doc(currentUserId);
+      await _firestore.runTransaction((transaction) async {
+        final currentUserDoc = await transaction.get(currentUserRef);
+        final currentFollowingCount =
+            currentUserDoc.data()!['followingCount'] ?? 0;
+        transaction.update(currentUserRef, {
+          'followingCount': currentFollowingCount + 1,
+        });
+      });
+
+      // Update the followersCount for the user being followed
+      final userToFollowRef =
+          _firestore.collection('users').doc(userIdToFollow);
+      await _firestore.runTransaction((transaction) async {
+        final userToFollowDoc = await transaction.get(userToFollowRef);
+        final currentFollowersCount =
+            userToFollowDoc.data()!['followersCount'] ?? 0;
+        transaction.update(userToFollowRef, {
+          'followersCount': currentFollowersCount + 1,
+        });
+      });
+    } catch (e) {
+      print('Error following user: $e');
+    }
+  }
+
+  Future<void> unfollowUser(
+      String currentUserId, String userIdToUnfollow) async {
+    try {
+      final followingRef = _firestore
+          .collection('users')
+          .doc(currentUserId)
+          .collection('following')
+          .doc(userIdToUnfollow);
+      await followingRef.delete();
+
+      final followersRef = _firestore
+          .collection('users')
+          .doc(userIdToUnfollow)
+          .collection('followers')
+          .doc(currentUserId);
+      await followersRef.delete();
+
+      // Update the followingCount for the current user
+      final currentUserRef = _firestore.collection('users').doc(currentUserId);
+      await _firestore.runTransaction((transaction) async {
+        final currentUserDoc = await transaction.get(currentUserRef);
+        final currentFollowingCount =
+            currentUserDoc.data()!['followingCount'] ?? 0;
+        transaction.update(currentUserRef, {
+          'followingCount': currentFollowingCount - 1,
+        });
+      });
+
+      // Update the followersCount for the user being unfollowed
+      final userToUnfollowRef =
+          _firestore.collection('users').doc(userIdToUnfollow);
+      await _firestore.runTransaction((transaction) async {
+        final userToUnfollowDoc = await transaction.get(userToUnfollowRef);
+        final currentFollowersCount =
+            userToUnfollowDoc.data()!['followersCount'] ?? 0;
+        transaction.update(userToUnfollowRef, {
+          'followersCount': currentFollowersCount - 1,
+        });
+      });
+    } catch (e) {
+      print('Error unfollowing user: $e');
+    }
+  }
 }

@@ -7,8 +7,7 @@ class AuthenticationService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  Stream<User?> get authStateChanges =>
-      _auth.authStateChanges(); // Add this line
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   Future<User?> signInWithGoogle() async {
     try {
@@ -43,9 +42,10 @@ class AuthenticationService {
     String username = '';
     bool isVegetarian = false;
     bool isNonVegetarian = false;
-    double postsCount = 0;
-    double followersCount = 0;
-    double followingCount = 0;
+    num postsCount = 0;
+    num followersCount = 0;
+    num followingCount = 0;
+    List<String> followingList = [];
     if (user != null) {
       DocumentSnapshot<Map<String, dynamic>> userData = await FirebaseFirestore
           .instance
@@ -61,7 +61,18 @@ class AuthenticationService {
         followersCount = data['followersCount'] ?? 0;
         followingCount = data['followingCount'] ?? 0;
       }
+
+      // Fetch followingList from the subcollection
+      QuerySnapshot followingSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('following')
+          .get();
+
+      // Extract user IDs from the following subcollection
+      followingList = followingSnapshot.docs.map((doc) => doc.id).toList();
     }
+
     if (user != null) {
       return GUser(
         uid: user.uid,
@@ -74,6 +85,7 @@ class AuthenticationService {
         postsCount: postsCount,
         followersCount: followersCount,
         followingCount: followingCount,
+        followingList: followingList,
       );
     }
     return null;

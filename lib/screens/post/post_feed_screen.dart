@@ -80,9 +80,13 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
                 return ListView.builder(
                   itemCount: posts.length,
                   itemBuilder: (context, index) {
+                    final post = posts[index];
+                    final bool isFollowing = user != null &&
+                        user!.followingList!.contains(post.userId);
                     return FoodPostItem(
-                      post: posts[index],
-                    );
+                        post: posts[index],
+                        isUserlogin: true,
+                        isFollowing: isFollowing);
                   },
                 );
               },

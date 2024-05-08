@@ -25,9 +25,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _isVegetarian = false;
   bool _isNonVegetarian = false;
   bool _isLoading = false;
-  double _postsCount = 0;
-  double _followersCount = 0;
-  double _followingCount = 0;
+  num _postsCount = 0;
+  num _followersCount = 0;
+  num _followingCount = 0;
 
   @override
   void initState() {

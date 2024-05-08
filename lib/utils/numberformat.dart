@@ -1,4 +1,4 @@
-String getFormattedCount(double count) {
+String getFormattedCount(num count) {
   if (count >= 1000000000) {
     return '${(count / 1000000000).toStringAsFixed(1)}B';
   } else if (count >= 1000000) {
