@@ -31,6 +31,7 @@ class AppConstants {
   static const Color secondaryColor = Color.fromARGB(255, 252, 143, 110);
   static const Color errorColor = Colors.red;
   static const Color borderColor = Colors.grey;
+  static const Color iconColor = Colors.white;
 
   // Fonts
   static const String primaryFontFamily = 'Roboto'; // Example font family
@@ -47,6 +48,12 @@ class AppConstants {
     fontFamily: primaryFontFamily,
     fontSize: 16,
     color: Colors.black,
+  );
+
+  static const TextStyle appBarTitleTextStyle = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
   );
 
   static const TextStyle titleTextStyle = TextStyle(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xploreeats/models/user.dart';
 import 'package:xploreeats/services/authentication_service.dart';
+import 'package:xploreeats/utils/app_constants.dart';
 import 'package:xploreeats/widgets/custom_appbar.dart';
 import 'package:xploreeats/screens/post/post_feed_screen.dart';
 
@@ -34,17 +35,19 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: PostFeedScreen(),
       bottomNavigationBar: BottomAppBar(
+        color: AppConstants.primaryColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              icon: Icon(Icons.home),
+              icon: Icon(Icons.home, color: AppConstants.iconColor),
               onPressed: () {
                 Navigator.pushNamed(context, '/home');
               },
             ),
             IconButton(
-              icon: Icon(Icons.video_file_rounded),
+              icon:
+                  Icon(Icons.video_file_rounded, color: AppConstants.iconColor),
               onPressed: () async {
                 user == null
                     ? showCenterSnackBar(
@@ -62,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? CircleAvatar(
                       backgroundImage: NetworkImage(user!.photoURL),
                     )
-                  : Icon(Icons.person),
+                  : Icon(Icons.person, color: AppConstants.iconColor),
               onPressed: () {
                 Navigator.pushNamed(context, '/profile');
               },

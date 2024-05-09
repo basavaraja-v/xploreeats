@@ -27,203 +27,170 @@ class _FoodPostItemState extends State<FoodPostItem> {
   final PostService _postService = PostService();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.0),
       decoration:
           BoxDecoration(border: Border.all(color: AppConstants.borderColor)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Video with profile picture, user name, and follow button overlay
-          Stack(
-            children: [
-              PostVideoPlayer(
-                  videoSource: widget.post.videoUrl, isNetwork: true),
-              Positioned(
-                top: 16,
-                left: 16,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Stack(
+              alignment: Alignment.topLeft,
+              children: [
+                PostVideoPlayer(
+                    videoSource: widget.post.videoUrl, isNetwork: true),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(widget.post.profileUrl),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        widget.post.username,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Spacer(),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (widget.isUserlogin == false) {
+                            showCenterSnackBar(
+                              context,
+                              'Sign Up to follow.',
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              duration: Duration(seconds: 3),
+                            );
+                          } else if (widget.isFollowing) {
+                            await _unfollowUser();
+                          } else {
+                            await _followUser();
+                          }
+                        },
+                        child: Text(
+                          widget.isFollowing ? 'Following' : 'Follow',
+                          style: AppConstants.labelTextStyle,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  if (widget.post.isVegetarian) _buildDietIcon(Colors.green),
+                  SizedBox(width: 4),
+                  if (widget.post.isNonVegetarian) _buildDietIcon(Colors.red),
+                  Spacer(),
+                  IconButton(
+                    icon: Icon(
+                      widget.post.isLikedByCurrentUser!
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      key: ValueKey<bool>(widget.post.isLikedByCurrentUser!),
+                      color: widget.post.isLikedByCurrentUser!
+                          ? Colors.red
+                          : Colors.grey,
+                    ),
+                    onPressed: () {
+                      widget.isUserlogin == false
+                          ? showCenterSnackBar(
+                              context,
+                              'Sign Up to like.',
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              duration: Duration(seconds: 3),
+                            )
+                          : _postService.updateLoveStatus(widget.post);
+                    },
+                  ),
+                  Text(
+                    getFormattedCount(widget.post.likeCount),
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                widget.post.caption,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Icon(Icons.restaurant, size: 20),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      widget.post.restaurantName,
+                      style: TextStyle(fontSize: 16),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: InkWell(
+                onTap: () {
+                  _launchMaps(widget.post.latitude, widget.post.longitude);
+                },
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(widget.post.profileUrl),
-                    ),
-                    SizedBox(width: 16),
-                    Text(
-                      widget.post.username,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (widget.isUserlogin == false) {
-                          showCenterSnackBar(
-                            context,
-                            'Sign Up to follow.',
-                            backgroundColor: Colors.red,
-                            textColor: Colors.white,
-                            duration: Duration(seconds: 3),
-                          );
-                        } else if (widget.isFollowing) {
-                          await _unfollowUser();
-                        } else {
-                          await _followUser();
-                        }
-                      },
+                    Icon(Icons.directions_sharp, size: 20),
+                    SizedBox(width: 8),
+                    Expanded(
                       child: Text(
-                        widget.isFollowing ? 'Following' : 'Follow',
-                        style: AppConstants.labelTextStyle,
+                        widget.post.location,
+                        style: TextStyle(fontSize: 16),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 16),
-          Row(
-            children: [
-              Row(
-                children: [
-                  if (widget.post.isVegetarian)
-                    Container(
-                      width: 26,
-                      height: 26,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.green),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.green, // Circle color
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                    ),
-                  SizedBox(width: 16),
-                  if (widget.post.isNonVegetarian)
-                    Container(
-                      width: 26,
-                      height: 26,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.red),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              SizedBox(width: 16),
-              IconButton(
-                icon: Icon(
-                  widget.post.isLikedByCurrentUser!
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  key: ValueKey<bool>(widget.post.isLikedByCurrentUser!),
-                  color: widget.post.isLikedByCurrentUser!
-                      ? Colors.red
-                      : Colors.grey,
-                ),
-                onPressed: () {
-                  widget.isUserlogin == false
-                      ? showCenterSnackBar(
-                          context,
-                          'Sign Up to like.',
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                          duration: Duration(seconds: 3),
-                        )
-                      : _postService.updateLoveStatus(widget.post);
-                },
-              ),
-              Text(
-                getFormattedCount(widget.post.likeCount),
-                style: TextStyle(fontSize: 16),
-              ),
-              // SizedBox(width: 16),
-              // IconButton(
-              //   icon: Icon(Icons.share),
-              //   onPressed: () {
-              //     // Handle share action
-              //   },
-              // ),
-              // Text(
-              //   getFormattedCount(widget.post.shareCount),
-              //   style: TextStyle(fontSize: 16),
-              // ),
-            ],
-          ),
-          // Caption
-          Row(
-            children: [
-              Text(
-                widget.post.caption,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          // Restaurant name
-          Row(
-            children: [
-              Icon(Icons.restaurant, size: 20),
-              SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  widget.post.restaurantName,
-                  style: TextStyle(fontSize: 16),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          // Location
-          InkWell(
-            onTap: () {
-              _launchMaps(widget.post.latitude, widget.post.longitude);
-            },
-            child: Row(
-              children: [
-                Icon(Icons.directions_sharp, size: 20),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    widget.post.location,
-                    style: TextStyle(fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
             ),
+            SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDietIcon(Color color) {
+    return Container(
+      width: 26,
+      height: 26,
+      decoration: BoxDecoration(
+        border: Border.all(color: color),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: Container(
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
           ),
-        ],
+        ),
       ),
     );
   }

@@ -40,7 +40,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
     super.initState();
     _loadUserProfile();
     _requestLocationPermission();
-    _pickVideo(ImageSource.gallery);
   }
 
   Future<void> _loadUserProfile() async {
@@ -67,7 +66,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       } else {
         showCenterSnackBar(
           context,
-          'Selected video exceeds 30 seconds.',
+          'Selected video exceeds 90 seconds.',
           backgroundColor: Colors.red,
           textColor: Colors.white,
           duration: Duration(seconds: 3),
@@ -186,9 +185,33 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     color: Colors.grey[200],
                     height: 200,
                     child: Center(
-                      child: CircularProgressIndicator(),
+                      child: Text(
+                        'Please select a video',
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
                   ),
+
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    _pickVideo(ImageSource.gallery);
+                  },
+                  icon: Icon(Icons.photo_library),
+                  label: Text('Pick from Gallery'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    _pickVideo(ImageSource.camera);
+                  },
+                  icon: Icon(Icons.videocam),
+                  label: Text('Record Video'),
+                ),
+              ],
+            ),
             SizedBox(height: 20),
             CustomButton(
               onPressed: () async {
