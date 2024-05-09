@@ -4,7 +4,6 @@ import 'package:xploreeats/firebase_options.dart';
 import 'package:xploreeats/screens/auth/login_screen.dart';
 import 'package:xploreeats/screens/home_screen.dart';
 import 'package:xploreeats/screens/post/add_post_screen.dart';
-import 'package:xploreeats/screens/post/post_feed_screen.dart';
 import 'package:xploreeats/screens/profile/profile_screen.dart';
 import 'package:xploreeats/utils/app_constants.dart';
 

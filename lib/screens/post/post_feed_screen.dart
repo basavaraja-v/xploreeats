@@ -18,30 +18,35 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
   final AuthenticationService _authService = AuthenticationService();
   double _latitude = 0.0;
   double _longitude = 0.0;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _postService = PostService();
-    _requestLocationPermission();
-    _loadUserProfile();
+    _initializeData();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  Future<void> _initializeData() async {
+    await _loadUserProfile();
+    await _requestLocationPermission();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _loadUserProfile() async {
     final GUser? userProfile = await _authService.getUserProfile();
-    setState(() {
-      user = userProfile;
-    });
+    if (userProfile != null) {
+      setState(() {
+        user = userProfile;
+      });
+    }
   }
 
   Future<void> _requestLocationPermission() async {
     if (await PermissionHandlerService.requestLocationPermission()) {
-      _fetchLocation();
+      await _fetchLocation();
     }
   }
 
@@ -62,57 +67,36 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: user != null
-          ? StreamBuilder<List<Post>>(
-              stream: _postService.getNearestPostsStream(
-                  _latitude, _longitude, user!),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  print('Error: ${snapshot.error}');
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                final List<Post> posts = snapshot.data!;
+    return _isLoading
+        ? Center(child: CircularProgressIndicator())
+        : StreamBuilder<List<Post>>(
+            stream:
+                _postService.getNearestPostsStream(_latitude, _longitude, user),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                print('Error: ${snapshot.error}');
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              final List<Post> posts = snapshot.data!;
 
-                return ListView.builder(
-                  itemCount: posts.length,
-                  itemBuilder: (context, index) {
-                    final post = posts[index];
-                    final bool isFollowing = user != null &&
-                        user!.followingList!.contains(post.userId);
-                    return FoodPostItem(
-                        post: posts[index],
-                        isUserlogin: true,
-                        isFollowing: isFollowing);
-                  },
-                );
-              },
-            )
-          : StreamBuilder<List<Post>>(
-              stream: _postService.getNearestPostsStream(_latitude, _longitude),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  print('Error: ${snapshot.error}');
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                final List<Post> posts = snapshot.data!;
-
-                return ListView.builder(
-                  itemCount: posts.length,
-                  itemBuilder: (context, index) {
-                    return FoodPostItem(
-                      post: posts[index],
-                    );
-                  },
-                );
-              },
-            ),
-    );
+              return ListView.builder(
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  final post = posts[index];
+                  final bool isUserLoggedIn = user != null;
+                  final bool isFollowing = isUserLoggedIn &&
+                      user!.followingList!.contains(post.userId);
+                  return FoodPostItem(
+                    post: post,
+                    isUserlogin: isUserLoggedIn,
+                    isFollowing: isFollowing,
+                  );
+                },
+              );
+            },
+          );
   }
 }
