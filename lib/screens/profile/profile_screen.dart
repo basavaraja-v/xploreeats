@@ -64,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         await _profileService.checkUsernameExists(_username!, _user!.uid);
     if (usernameExists) {
       // Username already exists, display message to user
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content:
             Text('Username already exists. Please choose a different one.'),
       ));
@@ -94,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await _profileService.updateUserProfile(_user!);
 
       // Show a snackbar to inform the user about the successful update
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Profile updated successfully!'),
       ));
     } catch (e) {
@@ -109,13 +109,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Profile',
             style: AppConstants.titleTextStyle,
           ),
         ),
         body: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: _user != null
               ? SingleChildScrollView(
                   child: Column(
@@ -126,22 +126,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         radius: 50,
                         backgroundImage: _user!.photoURL.isNotEmpty
                             ? NetworkImage(_user!.photoURL)
-                            : AssetImage(
+                            : const AssetImage(
                                     'assets/images/default_profile_pic.png')
                                 as ImageProvider,
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Text(
                         _user!.displayName,
-                        style: TextStyle(fontSize: 18),
+                        style: const TextStyle(fontSize: 18),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Column(
                             children: [
-                              Text(
+                              const Text(
                                 'Posts',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
@@ -152,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Column(
                             children: [
-                              Text(
+                              const Text(
                                 'Followers',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
@@ -163,7 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Column(
                             children: [
-                              Text(
+                              const Text(
                                 'Following',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
@@ -174,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       CustomTextFormField(
                         initialValue: _user!.username,
                         labelText: 'Username',
@@ -202,14 +202,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           });
                         },
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       _isLoading
-                          ? CircularProgressIndicator()
+                          ? const CircularProgressIndicator()
                           : CustomButton(
                               onPressed: _updateProfile,
                               text: 'Update Profile',
                             ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       CustomButton(
                         onPressed: () async {
                           await _authService.signOut();
@@ -220,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 )
-              : Center(
+              : const Center(
                   child: CircularProgressIndicator(),
                 ),
         ));

@@ -68,13 +68,13 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? Center(child: CircularProgressIndicator())
+        ? const Center(child: CircularProgressIndicator())
         : StreamBuilder<List<Post>>(
             stream:
                 _postService.getNearestPostsStream(_latitude, _longitude, user),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.hasError) {
                 print('Error: ${snapshot.error}');

@@ -9,15 +9,15 @@ import 'package:xploreeats/widgets/postvideo_player.dart';
 
 class FoodPostItem extends StatefulWidget {
   final Post post;
-  final isUserlogin;
-  var isFollowing;
+  final bool isUserlogin;
+  late final bool isFollowing;
 
-  FoodPostItem(
-      {Key? key,
-      required this.post,
-      this.isUserlogin = false,
-      this.isFollowing = false})
-      : super(key: key);
+  FoodPostItem({
+    Key? key,
+    required this.post,
+    this.isUserlogin = false,
+    this.isFollowing = false,
+  }) : super(key: key);
 
   @override
   _FoodPostItemState createState() => _FoodPostItemState();
@@ -36,33 +36,35 @@ class _FoodPostItemState extends State<FoodPostItem> {
             alignment: Alignment.topLeft,
             children: [
               PostVideoPlayer(
-                  videoSource: widget.post.videoUrl, isNetwork: true),
+                videoSource: widget.post.videoUrl,
+                isNetwork: true,
+              ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8),
                 child: Row(
                   children: [
                     CircleAvatar(
                       backgroundImage: NetworkImage(widget.post.profileUrl),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       widget.post.username,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     ElevatedButton(
                       onPressed: () async {
-                        if (widget.isUserlogin == false) {
+                        if (!widget.isUserlogin) {
                           showCenterSnackBar(
                             context,
                             'Sign Up to follow.',
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
-                            duration: Duration(seconds: 3),
+                            duration: const Duration(seconds: 3),
                           );
                         } else if (widget.isFollowing) {
                           await _unfollowUser();
@@ -80,15 +82,15 @@ class _FoodPostItemState extends State<FoodPostItem> {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
                 if (widget.post.isVegetarian) _buildDietIcon(Colors.green),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 if (widget.post.isNonVegetarian) _buildDietIcon(Colors.red),
-                Spacer(),
+                const Spacer(),
                 IconButton(
                   icon: Icon(
                     widget.post.isLikedByCurrentUser!
@@ -106,14 +108,14 @@ class _FoodPostItemState extends State<FoodPostItem> {
                             'Sign Up to like.',
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
-                            duration: Duration(seconds: 3),
+                            duration: const Duration(seconds: 3),
                           )
                         : _postService.updateLoveStatus(widget.post);
                   },
                 ),
                 Text(
                   getFormattedCount(widget.post.likeCount),
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),
@@ -122,28 +124,28 @@ class _FoodPostItemState extends State<FoodPostItem> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               widget.post.caption,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                Icon(Icons.restaurant, size: 20),
-                SizedBox(width: 8),
+                const Icon(Icons.restaurant, size: 20),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     widget.post.restaurantName,
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: InkWell(
@@ -152,12 +154,12 @@ class _FoodPostItemState extends State<FoodPostItem> {
               },
               child: Row(
                 children: [
-                  Icon(Icons.directions_sharp, size: 20),
-                  SizedBox(width: 8),
+                  const Icon(Icons.directions_sharp, size: 20),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       widget.post.location,
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -165,7 +167,7 @@ class _FoodPostItemState extends State<FoodPostItem> {
               ),
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
         ],
       ),
     );

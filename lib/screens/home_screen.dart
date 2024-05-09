@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'XploreEats',
       ),
       body: PostFeedScreen(),
@@ -40,14 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(
-              icon: Icon(Icons.home, color: AppConstants.iconColor),
+              icon: const Icon(Icons.home, color: AppConstants.iconColor),
               onPressed: () {
                 Navigator.pushNamed(context, '/home');
               },
             ),
             IconButton(
-              icon:
-                  Icon(Icons.video_file_rounded, color: AppConstants.iconColor),
+              icon: const Icon(Icons.video_file_rounded,
+                  color: AppConstants.iconColor),
               onPressed: () async {
                 user == null
                     ? showCenterSnackBar(
@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Sign Up to post.',
                         backgroundColor: Colors.red,
                         textColor: Colors.white,
-                        duration: Duration(seconds: 3),
+                        duration: const Duration(seconds: 3),
                       )
                     : Navigator.pushNamed(context, '/add_post');
               },
@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? CircleAvatar(
                       backgroundImage: NetworkImage(user!.photoURL),
                     )
-                  : Icon(Icons.person, color: AppConstants.iconColor),
+                  : const Icon(Icons.person, color: AppConstants.iconColor),
               onPressed: () {
                 Navigator.pushNamed(context, '/profile');
               },

@@ -31,9 +31,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
   bool _isVeg = false;
   bool _isNonVeg = false;
   bool _isFree = false;
+  bool _locationModifiedByUser = false;
   GUser? user;
   final AuthenticationService _authService = AuthenticationService();
   final PostService _postService = PostService();
+  bool _isUploadLocationRestaurant = true;
 
   @override
   void initState() {
@@ -53,7 +55,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickVideo(
       source: source,
-      maxDuration: Duration(seconds: 90),
+      maxDuration: const Duration(seconds: 90),
     );
 
     if (pickedFile != null) {
@@ -69,7 +71,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
           'Selected video exceeds 90 seconds.',
           backgroundColor: Colors.red,
           textColor: Colors.white,
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         );
       }
     }
@@ -122,6 +124,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
         _location = '$street, $subLocality, $locality';
         _latitude = position.latitude;
         _longitude = position.longitude;
+
+        if (!_locationModifiedByUser) {
+          // Update only if the location is not modified by the user
+          _latitude = position.latitude;
+          _longitude = position.longitude;
+        }
       });
     } catch (e) {
       // Handle location fetch error
@@ -130,10 +138,25 @@ class _AddPostScreenState extends State<AddPostScreen> {
     }
   }
 
+  Future<void> _geocodeAddress() async {
+    try {
+      List<Location> locations = await locationFromAddress(_location);
+      setState(() {
+        if (locations.isNotEmpty) {
+          _latitude = locations[0].latitude;
+          _longitude = locations[0].longitude;
+        }
+      });
+    } catch (e) {
+      // Handle geocoding error
+      print('Error geocoding address: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Add Post'),
+      appBar: const CustomAppBar(title: 'Add Post'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -144,13 +167,35 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 _captionController = value;
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             CustomTextFormField(
               labelText: 'Restaurant Name',
               onChanged: (value) {
                 _restaurantNameController = value;
               },
             ),
+            const SizedBox(height: 10),
+            CustomCheckboxListTile(
+              title: 'Upload from Restaurant Location',
+              value: _isUploadLocationRestaurant,
+              onChanged: (value) {
+                setState(() {
+                  _isUploadLocationRestaurant = value ?? false;
+                });
+              },
+            ),
+            if (!_isUploadLocationRestaurant)
+              CustomTextFormField(
+                labelText: 'Location',
+                initialValue: _location,
+                onChanged: (value) {
+                  setState(() {
+                    _location = value;
+                    _locationModifiedByUser = true;
+                  });
+                  _geocodeAddress();
+                },
+              ),
             CustomCheckboxListTile(
               title: 'Vegetarian',
               value: _isVeg,
@@ -169,30 +214,20 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 });
               },
             ),
-            // CustomCheckboxListTile(
-            //   title: 'Free',
-            //   value: _isFree,
-            //   onChanged: (value) {
-            //     setState(() {
-            //       _isFree = value!;
-            //     });
-            //   },
-            // ),
             _videoFile != null
                 ? PostVideoPlayer(
                     key: UniqueKey(), videoSource: _videoFile!.path)
                 : Container(
-                    color: Colors.grey[200],
-                    height: 200,
-                    child: Center(
+                    color: Colors.grey[100],
+                    height: 100,
+                    child: const Center(
                       child: Text(
                         'Please select a video',
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
                   ),
-
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -200,19 +235,19 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   onPressed: () {
                     _pickVideo(ImageSource.gallery);
                   },
-                  icon: Icon(Icons.photo_library),
-                  label: Text('Pick from Gallery'),
+                  icon: const Icon(Icons.photo_library),
+                  label: const Text('Pick from Gallery'),
                 ),
                 ElevatedButton.icon(
                   onPressed: () {
                     _pickVideo(ImageSource.camera);
                   },
-                  icon: Icon(Icons.videocam),
-                  label: Text('Record Video'),
+                  icon: const Icon(Icons.videocam),
+                  label: const Text('Record Video'),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             CustomButton(
               onPressed: () async {
                 // Save the post to Firestore or perform other actions
@@ -238,7 +273,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 } else {
                   // Show a message to the user if no video is selected
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Please select a video to post.'),
                       backgroundColor: Colors.red,
                       duration: Duration(seconds: 3),

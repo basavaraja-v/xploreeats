@@ -11,7 +11,7 @@ class LoginScreen extends StatelessWidget {
       future: AuthenticationService().getUserProfile(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
+          return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -30,11 +30,11 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Welcome to XploreEats',
                       style: AppConstants.headingTextStyle,
                     ),
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
                     ElevatedButton.icon(
                       onPressed: () async {
                         // Call sign in with Google method
@@ -46,11 +46,11 @@ class LoginScreen extends StatelessWidget {
                       },
                       icon: Image.asset('assets/images/google_icon.png',
                           height: 24.0),
-                      label: Text('Sign in with Google'),
+                      label: const Text('Sign in with Google'),
                       style: ElevatedButton.styleFrom(
                         primary: Colors.white,
                         onPrimary: AppConstants.primaryColor,
-                        minimumSize: Size(double.infinity, 50),
+                        minimumSize: const Size(double.infinity, 50),
                       ),
                     ),
                   ],

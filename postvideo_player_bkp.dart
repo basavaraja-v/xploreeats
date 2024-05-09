@@ -55,24 +55,28 @@ class _PostVideoPlayerState extends State<PostVideoPlayer> {
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  if (_controller.value.isPlaying) {
-                    _controller.pause();
-                  } else {
-                    _controller.play();
-                  }
-                });
-              },
-              child: VideoPlayer(_controller),
+          return Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height * 0.60,
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (_controller.value.isPlaying) {
+                      _controller.pause();
+                    } else {
+                      _controller.play();
+                    }
+                  });
+                },
+                child: VideoPlayer(_controller),
+              ),
             ),
           );
         } else {
           // While video is loading, display a placeholder or loading indicator
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         }
       },
     );
