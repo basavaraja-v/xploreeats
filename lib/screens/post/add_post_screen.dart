@@ -269,7 +269,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     timestamp: DateTime.now(),
                   );
                   _postService.addPost(newPost, _videoFile!);
-                  Navigator.of(context).pushReplacementNamed('/home');
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/home', (Route<dynamic> route) => false);
                 } else {
                   // Show a message to the user if no video is selected
                   ScaffoldMessenger.of(context).showSnackBar(

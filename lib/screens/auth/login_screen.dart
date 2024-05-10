@@ -41,7 +41,8 @@ class LoginScreen extends StatelessWidget {
                         auth.User? firebaseUser =
                             await AuthenticationService().signInWithGoogle();
                         if (firebaseUser != null) {
-                          Navigator.of(context).pushReplacementNamed('/home');
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/home', (Route<dynamic> route) => false);
                         }
                       },
                       icon: Image.asset('assets/images/google_icon.png',

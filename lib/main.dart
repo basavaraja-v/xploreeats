@@ -31,6 +31,7 @@ class XploreEatsApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/add_post': (context) => AddPostScreen(),
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }

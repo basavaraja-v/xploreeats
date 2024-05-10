@@ -19,6 +19,7 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
   double _latitude = 0.0;
   double _longitude = 0.0;
   bool _isLoading = true;
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -30,9 +31,7 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
   Future<void> _initializeData() async {
     await _loadUserProfile();
     await _requestLocationPermission();
-    setState(() {
-      _isLoading = false;
-    });
+    _isLoading = false;
   }
 
   Future<void> _loadUserProfile() async {
@@ -65,38 +64,78 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
     }
   }
 
+  List<Post> _filterPosts(List<Post> posts) {
+    if (_searchQuery.isEmpty) {
+      return posts;
+    } else {
+      return posts
+          .where((post) =>
+              post.caption.toLowerCase().contains(_searchQuery.toLowerCase()))
+          .toList();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
-        : StreamBuilder<List<Post>>(
-            stream:
-                _postService.getNearestPostsStream(_latitude, _longitude, user),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                print('Error: ${snapshot.error}');
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-              final List<Post> posts = snapshot.data!;
+        : Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Search',
+                    hintText: 'Search for food...',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                ),
+              ),
+              Expanded(
+                child: StreamBuilder<List<Post>>(
+                  stream: _postService.getNearestPostsStream(
+                      _latitude, _longitude, user),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      print('Error: ${snapshot.error}');
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+                    final List<Post> filteredPosts =
+                        _filterPosts(snapshot.data!);
 
-              return ListView.builder(
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  final post = posts[index];
-                  final bool isUserLoggedIn = user != null;
-                  final bool isFollowing = isUserLoggedIn &&
-                      user!.followingList!.contains(post.userId);
-                  return FoodPostItem(
-                    post: post,
-                    isUserlogin: isUserLoggedIn,
-                    isFollowing: isFollowing,
-                  );
-                },
-              );
-            },
+                    return ListView.builder(
+                      itemCount: filteredPosts.length,
+                      itemBuilder: (context, index) {
+                        final post = filteredPosts[index];
+                        final bool isUserLoggedIn = user != null;
+                        final bool isFollowing = isUserLoggedIn &&
+                            user!.followingList!.contains(post.userId);
+                        return FoodPostItem(
+                          post: post,
+                          isUserlogin: isUserLoggedIn,
+                          isFollowing: isFollowing,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           );
   }
 }

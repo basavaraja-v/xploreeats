@@ -213,7 +213,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       CustomButton(
                         onPressed: () async {
                           await _authService.signOut();
-                          Navigator.of(context).pushReplacementNamed('/home');
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/home', (Route<dynamic> route) => false);
                         },
                         text: 'Sign Out',
                       ),
