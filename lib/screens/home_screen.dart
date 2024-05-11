@@ -42,7 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               icon: const Icon(Icons.home, color: AppConstants.iconColor),
               onPressed: () {
-                // Navigator.pushNamed(context, '/home');
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/home', (Route<dynamic> route) => false);
               },
             ),
             IconButton(

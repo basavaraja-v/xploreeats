@@ -128,13 +128,13 @@ class _FoodPostItemState extends State<FoodPostItem> {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                const Icon(Icons.restaurant, size: 20),
-                const SizedBox(width: 8),
+                // const Icon(Icons.restaurant, size: 20),
+                // const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     widget.post.restaurantName,
@@ -145,26 +145,40 @@ class _FoodPostItemState extends State<FoodPostItem> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: InkWell(
-              onTap: () {
-                _launchMaps(widget.post.latitude, widget.post.longitude);
-              },
-              child: Row(
-                children: [
-                  const Icon(Icons.directions_sharp, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      widget.post.location,
-                      style: const TextStyle(fontSize: 16),
-                      overflow: TextOverflow.ellipsis,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.post.location,
+                    style: const TextStyle(fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Container(
+                  height:
+                      24, // Adjust the height according to your text's font size
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      _launchMaps(widget.post.latitude, widget.post.longitude);
+                    },
+                    icon: const Icon(Icons.directions,
+                        size: 16, color: AppConstants.primaryColor),
+                    label: const Text(
+                      'Get Directions',
+                      style: TextStyle(
+                          fontSize: 14, color: AppConstants.primaryColor),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      onPrimary: AppConstants.primaryColor,
+                      side: const BorderSide(color: AppConstants.primaryColor),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 8),
