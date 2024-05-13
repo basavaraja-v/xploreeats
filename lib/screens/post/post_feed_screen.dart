@@ -87,14 +87,14 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
                   decoration: InputDecoration(
                     labelText: 'Search',
                     hintText: 'Search for food...',
-                    prefixIcon: Icon(Icons.search),
+                    prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     filled: true,
                     fillColor: Colors.grey[200],
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 14.0),
                   ),
                   onChanged: (value) {
                     setState(() {
@@ -117,6 +117,12 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
                     }
                     final List<Post> filteredPosts =
                         _filterPosts(snapshot.data!);
+
+                    if (filteredPosts.isEmpty) {
+                      return Center(
+                          child: Text(
+                              'No ${_searchQuery.toLowerCase()} results found.'));
+                    }
 
                     return ListView.builder(
                       itemCount: filteredPosts.length,
