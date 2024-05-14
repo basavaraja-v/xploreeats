@@ -119,9 +119,7 @@ class _PostFeedScreenState extends State<PostFeedScreen> {
                         _filterPosts(snapshot.data!);
 
                     if (filteredPosts.isEmpty) {
-                      return Center(
-                          child: Text(
-                              'No ${_searchQuery.toLowerCase()} results found.'));
+                      return const Center(child: Text('No results found.'));
                     }
 
                     return ListView.builder(

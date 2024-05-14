@@ -125,7 +125,7 @@ class _FoodPostItemState extends State<FoodPostItem> {
             child: Text(
               widget.post.caption,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.visible,
             ),
           ),
           const SizedBox(height: 4),
@@ -139,7 +139,7 @@ class _FoodPostItemState extends State<FoodPostItem> {
                   child: Text(
                     widget.post.restaurantName,
                     style: const TextStyle(fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
+                    overflow: TextOverflow.visible,
                   ),
                 ),
               ],
@@ -154,12 +154,11 @@ class _FoodPostItemState extends State<FoodPostItem> {
                   child: Text(
                     widget.post.location,
                     style: const TextStyle(fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
+                    overflow: TextOverflow.visible,
                   ),
                 ),
-                Container(
-                  height:
-                      24, // Adjust the height according to your text's font size
+                SizedBox(
+                  height: 24,
                   child: ElevatedButton.icon(
                     onPressed: () {
                       _launchMaps(widget.post.latitude, widget.post.longitude);
